@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Collections.shuffle(cardList);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setAdapter(new MemoryAdapter(this, cardList, () -> {
             score += 10;
             tvScore.setText("امتیاز: " + score);
