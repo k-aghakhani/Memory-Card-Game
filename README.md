@@ -13,12 +13,6 @@ A fun and interactive **Memory Card Game** built using **Java** in **Android Stu
 
 ---
 
-## 📸 Screenshots
-<img src="https://via.placeholder.com/400" alt="Memory Card Game Screenshot" width="300" />
-<img src="https://via.placeholder.com/400" alt="Game Play" width="300" />
-
----
-
 ## 🛠️ Installation & Setup
 
 1. **Clone the repository:**
