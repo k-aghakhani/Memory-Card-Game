@@ -32,8 +32,10 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:clipToPadding="false"
+        android:background="@android:color/transparent"
         android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="3"/>
+
 
 </LinearLayout>
