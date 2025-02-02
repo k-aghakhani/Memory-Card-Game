@@ -7,22 +7,33 @@
     android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
     tools:context=".MainActivity">
 
+    <!-- Score TextView -->
     <TextView
+        android:fontFamily="@font/roboto_bold"
         android:id="@+id/tvScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="امتیاز: 0"
-        android:textSize="20sp"
+        android:text="Score: 0"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
         android:textStyle="bold"
-        android:layout_marginBottom="10dp"/>
+        android:background="@drawable/score_bg"
+        android:padding="10dp"
+        android:gravity="center"
+        android:layout_marginBottom="15dp"/>
 
+    <!-- Memory Game Grid -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:clipToPadding="false"
+        android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="4"/>
+        app:spanCount="3"/>
 
 </LinearLayout>
