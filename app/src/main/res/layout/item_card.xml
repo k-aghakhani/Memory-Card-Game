@@ -12,7 +12,7 @@
         android:paddingBottom="10dp"
         android:id="@+id/imgCard"
         android:layout_width="130dp"
-        android:layout_height="150dp"
+        android:layout_height="160dp"
         android:scaleType="fitXY"
         android:background="@android:color/transparent"
         android:src="@drawable/card_back" />
