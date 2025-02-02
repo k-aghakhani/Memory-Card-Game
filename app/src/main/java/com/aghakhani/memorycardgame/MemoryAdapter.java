@@ -1,16 +1,8 @@
 package com.aghakhani.memorycardgame;
-
+import android.app.AlertDialog;
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.widget.ImageView;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import java.util.List;
+import android.content.DialogInterface;
 import android.os.Handler;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +15,17 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
     private Context context;
     private List<MemoryCard> cards;
     private int flippedIndex = -1; // Stores the index of the first flipped card
-    private OnMatchListener matchListener;
+    private OnGameEndListener gameEndListener; // Listener for game end
 
-    // Interface to notify when a match is found
-    public interface OnMatchListener {
-        void onMatchFound();
+    // Interface for handling game completion
+    public interface OnGameEndListener {
+        void onGameEnd();
     }
 
-    public MemoryAdapter(Context context, List<MemoryCard> cards, OnMatchListener matchListener) {
+    public MemoryAdapter(Context context, List<MemoryCard> cards, OnGameEndListener gameEndListener) {
         this.context = context;
         this.cards = cards;
-        this.matchListener = matchListener;
+        this.gameEndListener = gameEndListener;
     }
 
     @NonNull
@@ -47,7 +39,7 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MemoryCard card = cards.get(position);
 
-        // Show the front image if the card is flipped, otherwise show the back
+        // Show front image if flipped, otherwise show back
         holder.imgCard.setImageResource(card.isFlipped() ? card.getImageId() : R.drawable.card_back);
 
         holder.itemView.setOnClickListener(v -> {
@@ -69,16 +61,20 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
                     // ✅ Cards match, keep them flipped
                     previousCard.setMatched(true);
                     card.setMatched(true);
-                    matchListener.onMatchFound();
                 } else {
                     // ❌ Cards do not match, flip both back after 1 second
                     new Handler().postDelayed(() -> {
                         previousCard.setFlipped(false);
                         card.setFlipped(false);
                         notifyDataSetChanged();
-                    }, 1000); // Delay of 1 second before flipping back
+                    }, 1000);
                 }
-                flippedIndex = -1; // Reset flipped index
+                flippedIndex = -1;
+
+                // Check if all cards are matched
+                if (isGameOver()) {
+                    gameEndListener.onGameEnd();
+                }
             }
         });
     }
@@ -95,5 +91,15 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
             super(itemView);
             imgCard = itemView.findViewById(R.id.imgCard);
         }
+    }
+
+    // Check if all cards are matched
+    private boolean isGameOver() {
+        for (MemoryCard card : cards) {
+            if (!card.isMatched()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
