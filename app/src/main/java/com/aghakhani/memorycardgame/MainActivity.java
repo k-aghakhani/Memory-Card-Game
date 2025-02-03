@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MemoryAdapter adapter;
     private List<MemoryCard> cards;
-    private TextView tvScore; // ✅ Added TextView for score tracking
+    private TextView tvScore; // ✅ TextView for displaying score
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recyclerView);
-        tvScore = findViewById(R.id.tvScore); // ✅ Find the score TextView
+        tvScore = findViewById(R.id.tvScore); // ✅ Get the score TextView
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
         // Initialize game
@@ -49,12 +49,12 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    // Show dialog when game is over
-    private void showGameEndDialog() {
+    // Show game over dialog
+    private void showGameEndDialog(boolean isWin) {
         runOnUiThread(() -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Game Over 🎉");
-            builder.setMessage("Congratulations! You matched all cards.");
+            builder.setTitle(isWin ? "Game Over 🎉" : "Game Over ❌");
+            builder.setMessage(isWin ? "Congratulations! You matched all cards." : "You lost! Try again.");
             builder.setCancelable(false);
 
             // Reset button

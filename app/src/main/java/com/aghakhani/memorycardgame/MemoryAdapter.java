@@ -15,13 +15,13 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
     private Context context;
     private List<MemoryCard> cards;
     private int flippedIndex = -1; // Stores the index of the first flipped card
-    private int score = 60; // ✅ Player's score
+    private int score = 100; // ✅ Start score at 100
     private TextView tvScore; // ✅ Score TextView
     private OnGameEndListener gameEndListener; // Listener for game end
 
     // Interface for handling game completion
     public interface OnGameEndListener {
-        void onGameEnd();
+        void onGameEnd(boolean isWin);
     }
 
     // ✅ Modified constructor to receive tvScore
@@ -30,7 +30,7 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
         this.cards = cards;
         this.tvScore = tvScore;
         this.gameEndListener = gameEndListener;
-        updateScore(0); // Initialize score
+        updateScore(0); // Initialize score display
     }
 
     @NonNull
@@ -74,13 +74,18 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
                         card.setFlipped(false);
                         notifyDataSetChanged();
                         updateScore(-30);
+
+                        // If score reaches 0, show loss dialog
+                        if (score == 0) {
+                            gameEndListener.onGameEnd(false); // Lose condition
+                        }
                     }, 1000);
                 }
                 flippedIndex = -1;
 
                 // Check if all cards are matched
                 if (isGameOver()) {
-                    gameEndListener.onGameEnd();
+                    gameEndListener.onGameEnd(true); // Win condition
                 }
             }
         });
