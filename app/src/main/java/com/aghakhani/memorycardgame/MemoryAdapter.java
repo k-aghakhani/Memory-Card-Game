@@ -1,12 +1,12 @@
 package com.aghakhani.memorycardgame;
-import android.app.AlertDialog;
+
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
@@ -15,6 +15,8 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
     private Context context;
     private List<MemoryCard> cards;
     private int flippedIndex = -1; // Stores the index of the first flipped card
+    private int score = 60; // ✅ Player's score
+    private TextView tvScore; // ✅ Score TextView
     private OnGameEndListener gameEndListener; // Listener for game end
 
     // Interface for handling game completion
@@ -22,10 +24,13 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
         void onGameEnd();
     }
 
-    public MemoryAdapter(Context context, List<MemoryCard> cards, OnGameEndListener gameEndListener) {
+    // ✅ Modified constructor to receive tvScore
+    public MemoryAdapter(Context context, List<MemoryCard> cards, TextView tvScore, OnGameEndListener gameEndListener) {
         this.context = context;
         this.cards = cards;
+        this.tvScore = tvScore;
         this.gameEndListener = gameEndListener;
+        updateScore(0); // Initialize score
     }
 
     @NonNull
@@ -58,15 +63,17 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
                 MemoryCard previousCard = cards.get(flippedIndex);
 
                 if (previousCard.getImageId() == card.getImageId()) {
-                    // ✅ Cards match, keep them flipped
+                    // ✅ Correct match: +50 points
                     previousCard.setMatched(true);
                     card.setMatched(true);
+                    updateScore(50);
                 } else {
-                    // ❌ Cards do not match, flip both back after 1 second
+                    // ❌ Incorrect match: -30 points (After delay)
                     new Handler().postDelayed(() -> {
                         previousCard.setFlipped(false);
                         card.setFlipped(false);
                         notifyDataSetChanged();
+                        updateScore(-30);
                     }, 1000);
                 }
                 flippedIndex = -1;
@@ -91,6 +98,13 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
             super(itemView);
             imgCard = itemView.findViewById(R.id.imgCard);
         }
+    }
+
+    // ✅ Method to update score
+    private void updateScore(int points) {
+        score += points;
+        if (score < 0) score = 0; // Prevent negative score
+        tvScore.setText("Score: " + score);
     }
 
     // Check if all cards are matched
