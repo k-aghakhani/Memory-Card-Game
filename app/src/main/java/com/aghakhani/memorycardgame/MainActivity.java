@@ -2,8 +2,7 @@ package com.aghakhani.memorycardgame;
 
 import android.os.Bundle;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MemoryAdapter adapter;
     private List<MemoryCard> cards;
+    private TextView tvScore; // ✅ Added TextView for score tracking
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recyclerView);
+        tvScore = findViewById(R.id.tvScore); // ✅ Find the score TextView
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
         // Initialize game
@@ -43,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
         // Shuffle cards
         Collections.shuffle(cards);
 
-        // Setup adapter with game end listener
-        adapter = new MemoryAdapter(this, cards, this::showGameEndDialog);
+        // Setup adapter with game end listener & send tvScore
+        adapter = new MemoryAdapter(this, cards, tvScore, this::showGameEndDialog);
         recyclerView.setAdapter(adapter);
     }
 
