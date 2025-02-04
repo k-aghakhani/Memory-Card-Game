@@ -9,12 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import android.media.MediaPlayer;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MemoryAdapter adapter;
     private List<MemoryCard> cards;
     private TextView tvScore; // ✅ TextView for displaying score
+
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         tvScore = findViewById(R.id.tvScore); // ✅ Get the score TextView
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-
+        mediaPlayer = MediaPlayer.create(this, R.raw.lose_sound);
         // Initialize game
         setupGame();
     }
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     // Show game over dialog
     private void showGameEndDialog(boolean isWin) {
         runOnUiThread(() -> {
+            mediaPlayer.start();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(isWin ? "Game Over 🎉" : "Game Over ❌");
             builder.setMessage(isWin ? "Congratulations! You matched all cards." : "You lost! Try again.");
