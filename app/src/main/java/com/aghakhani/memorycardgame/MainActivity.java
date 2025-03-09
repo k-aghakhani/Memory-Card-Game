@@ -15,8 +15,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MemoryAdapter adapter;
     private List<MemoryCard> cards;
-    private TextView tvScore; // ✅ TextView for displaying score
-    private MediaPlayer gameOverSound,winSound;
+    private TextView tvScore; // TextView for displaying score
+    private MediaPlayer gameOverSound, winSound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recyclerView);
-        tvScore = findViewById(R.id.tvScore); // ✅ Get the score TextView
+        tvScore = findViewById(R.id.tvScore); // Get the score TextView
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         gameOverSound = MediaPlayer.create(this, R.raw.lose_sound);
         winSound = MediaPlayer.create(this, R.raw.win_sound);
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     // Show win dialog
     private void showWinDialog() {
         runOnUiThread(() -> {
-            winSound.start(); // Play win sound (if you have a specific sound for winning, change it here)
+            winSound.start(); // Play win sound
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Congratulations 🎉");
             builder.setMessage("You matched all cards! Well done.");

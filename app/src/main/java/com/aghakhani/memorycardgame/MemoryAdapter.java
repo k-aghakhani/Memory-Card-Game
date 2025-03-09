@@ -1,5 +1,8 @@
 package com.aghakhani.memorycardgame;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -15,8 +18,8 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
     private Context context;
     private List<MemoryCard> cards;
     private int flippedIndex = -1; // Stores the index of the first flipped card
-    private int score = 100; // ✅ Start score at 100
-    private TextView tvScore; // ✅ Score TextView
+    private int score = 100; // Start score at 100
+    private TextView tvScore; // Score TextView
     private OnGameEndListener gameEndListener; // Listener for game end
 
     // Interface for handling game completion
@@ -24,7 +27,7 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
         void onGameEnd(boolean isWin);
     }
 
-    // ✅ Modified constructor to receive tvScore
+    // Constructor to receive context, cards, tvScore, and game end listener
     public MemoryAdapter(Context context, List<MemoryCard> cards, TextView tvScore, OnGameEndListener gameEndListener) {
         this.context = context;
         this.cards = cards;
@@ -51,9 +54,8 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
             // Ignore clicks on matched or already flipped cards
             if (card.isMatched() || card.isFlipped()) return;
 
-            // Flip the selected card
-            card.setFlipped(true);
-            notifyItemChanged(position);
+            // Flip the selected card with animation
+            flipCard(holder.imgCard, card, position);
 
             if (flippedIndex == -1) {
                 // First card is selected
@@ -63,15 +65,16 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
                 MemoryCard previousCard = cards.get(flippedIndex);
 
                 if (previousCard.getImageId() == card.getImageId()) {
-                    // ✅ Correct match: +50 points
+                    // Correct match: +50 points
                     previousCard.setMatched(true);
                     card.setMatched(true);
                     updateScore(50);
                 } else {
-                    // ❌ Incorrect match: -30 points (After delay)
+                    // Incorrect match: -30 points (After delay)
                     new Handler().postDelayed(() -> {
                         previousCard.setFlipped(false);
                         card.setFlipped(false);
+                        // Notify the entire dataset to ensure all cards are updated
                         notifyDataSetChanged();
                         updateScore(-30);
 
@@ -105,7 +108,7 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
         }
     }
 
-    // ✅ Method to update score
+    // Method to update score
     private void updateScore(int points) {
         score += points;
         if (score < 0) score = 0; // Prevent negative score
@@ -120,5 +123,25 @@ public class MemoryAdapter extends RecyclerView.Adapter<MemoryAdapter.ViewHolder
             }
         }
         return true;
+    }
+
+    // Flip card animation (from back to front or vice versa)
+    private void flipCard(ImageView view, MemoryCard card, int position) {
+        // Animate the card to 90 degrees (halfway flip)
+        ObjectAnimator flipOut = ObjectAnimator.ofFloat(view, "rotationY", 0f, 90f);
+        flipOut.setDuration(200); // Duration for the first half of the flip
+        flipOut.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // Update card state and image when hidden (at 90 degrees)
+                card.setFlipped(true);
+                view.setImageResource(card.getImageId()); // Show front image
+                // Animate back from 90 to 0 degrees
+                ObjectAnimator flipIn = ObjectAnimator.ofFloat(view, "rotationY", 90f, 0f);
+                flipIn.setDuration(200); // Duration for the second half
+                flipIn.start();
+            }
+        });
+        flipOut.start();
     }
 }
